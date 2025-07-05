@@ -1,9 +1,9 @@
 {
-  "name": "com.dabois.easysettings",
-  "version": "1.1.6",
-  "displayName": "Easy Settings",
+  "name": "com.dabois.quickDatabase",
+  "version": "1.0.0",
+  "displayName": "Quick Database",
   "unity": "2020.1",
-  "description": "Create settings easily in Unity using the Settings Provider",
+  "description": "Create Databases easily to organize and reference your assets",
   "keywords": [
     "Utilities",
     "Settings"
