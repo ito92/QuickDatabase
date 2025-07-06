@@ -5,8 +5,10 @@ using UnityEditor;
 using DaBois.Utilities;
 using System;
 using static DaBois.Utilities.QuickDatabaseGlobalSettings;
+#if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets;
+#endif
 
 namespace DaBois.EditorUtilities
 {
@@ -528,6 +530,7 @@ namespace DaBois.EditorUtilities
                     Sprite dragableIcon = (Sprite)AssetDatabase.LoadAssetAtPath(dragablePath, typeof(Sprite));
                     if (dragableIcon)
                     {
+                        #if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
                         addedNew = true;
                         iconAsset.FindPropertyRelative("m_AssetGUID").stringValue = AssetDatabase.AssetPathToGUID(dragablePath);
 
@@ -536,6 +539,7 @@ namespace DaBois.EditorUtilities
                         {
                             settings.CreateAssetReference(iconAsset.FindPropertyRelative("m_AssetGUID").stringValue);
                         }
+#endif
                     }
 
                     if (addedNew)
@@ -627,11 +631,13 @@ namespace DaBois.EditorUtilities
                 guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(_icon.objectReferenceValue));
                 _iconAsset.FindPropertyRelative("m_AssetGUID").stringValue = guid;
 
+                #if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
                 AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
                 if (settings.FindAssetEntry(guid) == null)
                 {
                     settings.CreateAssetReference(guid);
                 }
+#endif
             }
         }
     }
