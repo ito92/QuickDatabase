@@ -298,7 +298,7 @@ namespace DaBois.EditorUtilities
 
         protected virtual void CreateItemWindow(SerializedProperty items, System.Action<SerializedProperty> callback)
         {
-            //CreateDatabaseItemWindow.Open<T>(callback);
+            CreateDatabaseItemWindow.Open(items, callback);
         }
 
         protected virtual void Filter(SerializedProperty item, ref bool passed)
