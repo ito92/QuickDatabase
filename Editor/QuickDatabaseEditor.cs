@@ -60,12 +60,18 @@ namespace DaBois.EditorUtilities
             }
             if (_popupOpen) return;
 
-            _init = true;            
+            _init = true;
 
             GUI.changed = true;
             SerializedProperty _items = property.FindPropertyRelative("_items");
             for (int i = 0; i < _items.arraySize; i++)
             {
+                if (_items.GetArrayElementAtIndex(i).FindPropertyRelative("_notValid").boolValue)
+                {
+                    _items.DeleteArrayElementAtIndex(i);
+                    i--;
+                    continue;
+                }
                 _items.GetArrayElementAtIndex(i).FindPropertyRelative("_id").intValue = i;
             }
 
@@ -255,7 +261,7 @@ namespace DaBois.EditorUtilities
                         break;
                     case action.Create:
                         _popupOpen = true;
-                        CreateItemWindow(_items, (s)=>
+                        CreateItemWindow(_items, (s) =>
                         {
                             _popupOpen = false;
                             _items.serializedObject.ApplyModifiedProperties();
@@ -303,7 +309,7 @@ namespace DaBois.EditorUtilities
 
         protected virtual void Filter(SerializedProperty item, ref bool passed)
         {
-            
+
         }
 
         protected virtual void ToolbarGUI(Rect position, QuickDatabaseEditorSettings settings)
@@ -503,7 +509,7 @@ namespace DaBois.EditorUtilities
             Rect fixedPos = new Rect(position);
 
             Texture2D addressableIcon = RenderIcon(item);
-            
+
             EditorGUI.DrawPreviewTexture(fixedPos, addressableIcon ? addressableIcon : Texture2D.whiteTexture, null, ScaleMode.ScaleAndCrop);
             if (Event.current.type == EventType.MouseUp && fixedPos.Contains(Event.current.mousePosition))
             {

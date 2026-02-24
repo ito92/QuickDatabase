@@ -57,13 +57,6 @@ namespace DaBois.Utilities
         {
             BaseInit();
             index--;
-
-            if (ordered)
-            {
-            }
-            else
-            {
-            }
             
 
             if (index < 0 || index > _items.Length)

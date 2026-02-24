@@ -35,6 +35,8 @@ namespace DaBois.EditorUtilities
                 while (childProp.NextVisible(true));
             }
 
+            window._itemProp.FindPropertyRelative("_order").intValue = 10000;
+            window._itemProp.FindPropertyRelative("_notValid").boolValue = true;
             window._items = items;
             window._onCreation = callback;
 
@@ -68,11 +70,13 @@ namespace DaBois.EditorUtilities
         {
             if (_itemProp == null) { Close(); return; }
             EditorGUILayout.PropertyField(_itemProp, true);
+            _itemProp.serializedObject.ApplyModifiedProperties();
 
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Create", GUILayout.Height(30)))
             {
+                _itemProp.FindPropertyRelative("_notValid").boolValue = false;
                 _itemProp.FindPropertyRelative("_order").intValue = 10000;
                 _success = true;
                 _onCreation?.Invoke(_itemProp);

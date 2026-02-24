@@ -17,9 +17,13 @@ namespace DaBois.Utilities
         [HideInInspector]
         private ushort _id = default;
         [SerializeField]
+        [HideInInspector]
         private ushort _order = default;
         [SerializeField]
         private string _name = default;
+        [SerializeField]
+        [HideInInspector]
+        private bool _notValid = false;
 
         [SerializeField]
 #if QuickDatabaseSettings_Transition
