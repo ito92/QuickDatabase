@@ -539,7 +539,11 @@ namespace DaBois.EditorUtilities
             string m_CachedAsset = _iconAsset.FindPropertyRelative("m_AssetGUID").stringValue;
             if (!string.IsNullOrEmpty(m_CachedAsset))
             {
-                return ((Sprite)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(m_CachedAsset), typeof(Sprite))).texture;
+                string path = AssetDatabase.GUIDToAssetPath(m_CachedAsset);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    return ((Sprite)AssetDatabase.LoadAssetAtPath(path, typeof(Sprite))).texture;
+                }
             }
 
             return null;
