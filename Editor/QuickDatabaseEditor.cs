@@ -5,17 +5,15 @@ using UnityEditor;
 using DaBois.Utilities;
 using System;
 using static DaBois.Utilities.QuickDatabaseGlobalSettings;
-#if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets;
-#endif
 
 namespace DaBois.EditorUtilities
 {
     [CustomPropertyDrawer(typeof(QuickDatabase), true)]
     public class QuickDatabaseEditor : PropertyDrawer
     {
-        public enum action { None, Add, RemoveLast, RemoveId }
+        public enum action { None, Add, RemoveLast, RemoveId, Create }
 
         public struct OrderableData
         {
@@ -45,6 +43,7 @@ namespace DaBois.EditorUtilities
         private bool _dragging;
         private readonly Color _acceptColor = new Color(.01f, .98f, .32f, .5f);
         private readonly Color _rejectColor = new Color(.88f, .06f, .16f, .5f);
+        private bool _popupOpen;
 
         private const string SETTINGS_PATH = "QuickDatabaseSettings";
 
@@ -59,8 +58,9 @@ namespace DaBois.EditorUtilities
             {
                 return;
             }
+            if (_popupOpen) return;
 
-            _init = true;
+            _init = true;            
 
             GUI.changed = true;
             SerializedProperty _items = property.FindPropertyRelative("_items");
@@ -253,6 +253,16 @@ namespace DaBois.EditorUtilities
                         _items.DeleteArrayElementAtIndex((int)_actionData);
                         GUI.changed = true;
                         break;
+                    case action.Create:
+                        _popupOpen = true;
+                        CreateItemWindow(_items, (s)=>
+                        {
+                            _popupOpen = false;
+                            _items.serializedObject.ApplyModifiedProperties();
+                            GUI.changed = true;
+                            property.serializedObject.Update();
+                        });
+                        break;
                 }
 
                 property.serializedObject.ApplyModifiedProperties();
@@ -271,6 +281,24 @@ namespace DaBois.EditorUtilities
             {
                 _init = false;
             }
+        }
+
+        private void SetPropertyValue(SerializedProperty prop, object value)
+        {
+            switch (prop.propertyType)
+            {
+                case SerializedPropertyType.Integer: prop.intValue = (int)value; break;
+                case SerializedPropertyType.Float: prop.floatValue = (float)value; break;
+                case SerializedPropertyType.String: prop.stringValue = (string)value; break;
+                case SerializedPropertyType.Boolean: prop.boolValue = (bool)value; break;
+                case SerializedPropertyType.Color: prop.colorValue = (Color)value; break;
+                case SerializedPropertyType.ObjectReference: prop.objectReferenceValue = (UnityEngine.Object)value; break;
+            }
+        }
+
+        protected virtual void CreateItemWindow(SerializedProperty items, System.Action<SerializedProperty> callback)
+        {
+            //CreateDatabaseItemWindow.Open<T>(callback);
         }
 
         protected virtual void Filter(SerializedProperty item, ref bool passed)
@@ -295,6 +323,12 @@ namespace DaBois.EditorUtilities
             if (GUI.Button(position, new GUIContent("-", "Remove Last"), "ButtonMid"))
             {
                 _action = action.RemoveLast;
+            }
+            position.x += 16;
+            position.width = 36;
+            if (GUI.Button(position, new GUIContent("New", "Create Item"), "ButtonMid"))
+            {
+                _action = action.Create;
             }
 
             position.x += position.width;
@@ -331,9 +365,6 @@ namespace DaBois.EditorUtilities
 
                     break;
             }
-
-
-
 
             position.width = 36;
             position.x += 32;
@@ -372,6 +403,12 @@ namespace DaBois.EditorUtilities
             if (GUI.Button(position, new GUIContent("-", "Remove Last"), "ButtonMid"))
             {
                 _action = action.RemoveLast;
+            }
+            position.x += 16;
+            position.width = 36;
+            if (GUI.Button(position, new GUIContent("New", "Create Item"), "ButtonMid"))
+            {
+                _action = action.Create;
             }
 
             position.width = 36;
@@ -530,7 +567,6 @@ namespace DaBois.EditorUtilities
                     Sprite dragableIcon = (Sprite)AssetDatabase.LoadAssetAtPath(dragablePath, typeof(Sprite));
                     if (dragableIcon)
                     {
-                        #if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
                         addedNew = true;
                         iconAsset.FindPropertyRelative("m_AssetGUID").stringValue = AssetDatabase.AssetPathToGUID(dragablePath);
 
@@ -539,7 +575,6 @@ namespace DaBois.EditorUtilities
                         {
                             settings.CreateAssetReference(iconAsset.FindPropertyRelative("m_AssetGUID").stringValue);
                         }
-#endif
                     }
 
                     if (addedNew)
@@ -631,13 +666,11 @@ namespace DaBois.EditorUtilities
                 guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(_icon.objectReferenceValue));
                 _iconAsset.FindPropertyRelative("m_AssetGUID").stringValue = guid;
 
-                #if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
                 AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
                 if (settings.FindAssetEntry(guid) == null)
                 {
                     settings.CreateAssetReference(guid);
                 }
-#endif
             }
         }
     }

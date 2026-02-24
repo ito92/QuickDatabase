@@ -43,15 +43,12 @@ namespace DaBois.Utilities
             BaseInit();
             index--;
 
-            Debug.Log("Getting index: " + index + ", total: " + _items.Length);
-
             if(index < 0 || index >= _items.Length)
             {
                 return null;
             }
             else
             {
-                Debug.Log("Item: " + _items[index].Name);
                 return _items[index];
             }
         }
@@ -59,22 +56,27 @@ namespace DaBois.Utilities
         public override QuickDatabaseItem GetItem(int index, bool ordered)
         {
             BaseInit();
-            //index--;
+            index--;
 
-            Debug.Log("Getting index: " + index + ", total: " + _items.Length);
+            if (ordered)
+            {
+            }
+            else
+            {
+            }
+            
 
-            if (index < 0 || index >= _items.Length)
+            if (index < 0 || index > _items.Length)
             {
                 return null;
             }
 
-            if (ordered)
+            if (!ordered)
             {
-                return GetItem(index);
+                return GetItem(index + 1);
             }
             else
             {
-                Debug.Log("Item: " + _itemsOrdered[index]);
                 return _items[_itemsOrdered[index]];
             }
         }
@@ -103,6 +105,12 @@ namespace DaBois.Utilities
             }
 
             items.Sort(ItemsOrderer);
+        }
+        
+        public virtual void GetItems(ref List<T> items)
+        {
+            BaseInit();
+            items.AddRange(_items);
         }
 
         private int ItemsOrderer(QuickDatabaseItem x, QuickDatabaseItem y)
