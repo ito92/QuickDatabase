@@ -33,6 +33,7 @@ namespace DaBois.Utilities
         //public void GetIcon(System.Action<Sprite> callback) { }
 #elif QuickDatabaseSettings_Addressables
         protected AssetReferenceSprite _iconAsset = default;
+        public AssetReferenceSprite IconAsset { get => _iconAsset; }
 #else
         private Sprite _icon = default;
 #endif
@@ -41,7 +42,7 @@ namespace DaBois.Utilities
         public ushort Order { get => _order; }
         public string Name { get => _name; }
         public ushort Id { get => _id; }
-        public AssetReferenceSprite IconAsset { get => _iconAsset; }
+        
 
 #if QuickDatabaseSettings_Transition || QuickDatabaseSettings_Addressables
         public AsyncOperationHandle GetIcon(System.Action<Sprite> callback)
